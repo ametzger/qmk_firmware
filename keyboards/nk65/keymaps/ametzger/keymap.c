@@ -16,7 +16,7 @@
 #include QMK_KEYBOARD_H
 
 enum custom_keycodes {
-    THUMBSUP = SAFE_RANGE,
+    ASMIO = SAFE_RANGE,
     JF_EMAIL,
     ASM_EMAIL,
     GMAIL_EMAIL,
@@ -31,7 +31,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     KC_LCTL, KC_LALT, KC_LCMD,                KC_SPC,                          KC_RCMD, KC_RALT, MO(1), KC_LEFT, KC_DOWN, KC_RGHT),
 
 [1] = LAYOUT_65_ansi( /* FN */
-    KC_GRV,  KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,   KC_F6,   KC_F7,   KC_F8,   KC_F9,   KC_F10,  KC_F11,  KC_F12,  KC_DEL,  THUMBSUP,    \
+    KC_GRV,  KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,   KC_F6,   KC_F7,   KC_F8,   KC_F9,   KC_F10,  KC_F11,  KC_F12,  KC_DEL,  ASMIO,    \
     KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, RESET,   JF_EMAIL,    \
     KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, S1_DEC,  S1_INC,  S2_DEC,  S2_INC,  KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,          KC_TRNS, ASM_EMAIL,   \
     KC_TRNS, EF_DEC,  EF_INC,  H1_DEC,  H1_INC,  H2_DEC,  H2_INC,  BR_DEC,  BR_INC,  ES_DEC,  ES_INC,  KC_TRNS,          KC_VOLU, GMAIL_EMAIL, \
@@ -64,9 +64,9 @@ void matrix_scan_user(void) {
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   switch (keycode) {
-    case THUMBSUP:
+    case ASMIO:
       if (record->event.pressed) {
-        SEND_STRING("+:thumbsup:");
+        SEND_STRING("https://asm.io/");
       }
       break;
     case JF_EMAIL:
