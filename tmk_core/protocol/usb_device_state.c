@@ -20,9 +20,15 @@
 #    include "haptic.h"
 #endif
 
+#ifdef OS_DETECTION_ENABLE
+#    include "os_detection.h"
+#endif
+
 enum usb_device_state usb_device_state = USB_DEVICE_STATE_NO_INIT;
 
-__attribute__((weak)) void notify_usb_device_state_change_kb(enum usb_device_state usb_device_state) { notify_usb_device_state_change_user(usb_device_state); }
+__attribute__((weak)) void notify_usb_device_state_change_kb(enum usb_device_state usb_device_state) {
+    notify_usb_device_state_change_user(usb_device_state);
+}
 
 __attribute__((weak)) void notify_usb_device_state_change_user(enum usb_device_state usb_device_state) {}
 
@@ -30,7 +36,12 @@ static void notify_usb_device_state_change(enum usb_device_state usb_device_stat
 #if defined(HAPTIC_ENABLE) && HAPTIC_OFF_IN_LOW_POWER
     haptic_notify_usb_device_state_change();
 #endif
+
     notify_usb_device_state_change_kb(usb_device_state);
+
+#ifdef OS_DETECTION_ENABLE
+    os_detection_notify_usb_device_state_change(usb_device_state);
+#endif
 }
 
 void usb_device_state_set_configuration(bool isConfigured, uint8_t configurationNumber) {

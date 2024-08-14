@@ -45,10 +45,10 @@ __attribute__((weak)) void spi_init(void) {
         CLK_set_spi_freq(CHAN_SERCOM_SPI, FREQ_SPI_DEFAULT);
 
         // Set up MCU SPI pins
-        PORT->Group[SAMD_PORT(SPI_DATAOUT_PIN)].PMUX[SAMD_PIN(SPI_DATAOUT_PIN) / 2].bit.SPI_DATAOUT_MUX_SEL = SPI_DATAOUT_MUX;  // MUX select for sercom
-        PORT->Group[SAMD_PORT(SPI_SCLK_PIN)].PMUX[SAMD_PIN(SPI_SCLK_PIN) / 2].bit.SPI_SCLK_MUX_SEL          = SPI_SCLK_MUX;     // MUX select for sercom
-        PORT->Group[SAMD_PORT(SPI_DATAOUT_PIN)].PINCFG[SAMD_PIN(SPI_DATAOUT_PIN)].bit.PMUXEN                = 1;                // MUX Enable
-        PORT->Group[SAMD_PORT(SPI_SCLK_PIN)].PINCFG[SAMD_PIN(SPI_SCLK_PIN)].bit.PMUXEN                      = 1;                // MUX Enable
+        PORT->Group[SAMD_PORT(SPI_DATAOUT_PIN)].PMUX[SAMD_PIN(SPI_DATAOUT_PIN) / 2].bit.SPI_DATAOUT_MUX_SEL = SPI_DATAOUT_MUX; // MUX select for sercom
+        PORT->Group[SAMD_PORT(SPI_SCLK_PIN)].PMUX[SAMD_PIN(SPI_SCLK_PIN) / 2].bit.SPI_SCLK_MUX_SEL          = SPI_SCLK_MUX;    // MUX select for sercom
+        PORT->Group[SAMD_PORT(SPI_DATAOUT_PIN)].PINCFG[SAMD_PIN(SPI_DATAOUT_PIN)].bit.PMUXEN                = 1;               // MUX Enable
+        PORT->Group[SAMD_PORT(SPI_SCLK_PIN)].PINCFG[SAMD_PIN(SPI_SCLK_PIN)].bit.PMUXEN                      = 1;               // MUX Enable
 
         DBGC(DC_SPI_INIT_COMPLETE);
     }
@@ -60,17 +60,17 @@ bool spi_start(pin_t csPin, bool lsbFirst, uint8_t mode, uint16_t divisor) {
     }
 
     currentSelectPin = csPin;
-    setPinOutput(currentSelectPin);
-    writePinLow(currentSelectPin);
+    gpio_set_pin_output(currentSelectPin);
+    gpio_write_pin_low(currentSelectPin);
 
-    SPI_SERCOM->SPI.CTRLA.bit.DORD = lsbFirst;  // Data Order - LSB is transferred first
-    SPI_SERCOM->SPI.CTRLA.bit.CPOL = 1;         // Clock Polarity - SCK high when idle. Leading edge of cycle is falling. Trailing rising.
-    SPI_SERCOM->SPI.CTRLA.bit.CPHA = 1;         // Clock Phase - Leading Edge Falling, change, Trailing Edge - Rising, sample
-    SPI_SERCOM->SPI.CTRLA.bit.DIPO = 3;         // Data In Pinout - SERCOM PAD[3] is used as data input (Configure away from DOPO. Not using input.)
-    SPI_SERCOM->SPI.CTRLA.bit.DOPO = 0;         // Data Output PAD[0], Serial Clock PAD[1]
-    SPI_SERCOM->SPI.CTRLA.bit.MODE = 3;         // Operating Mode - Master operation
+    SPI_SERCOM->SPI.CTRLA.bit.DORD = lsbFirst; // Data Order - LSB is transferred first
+    SPI_SERCOM->SPI.CTRLA.bit.CPOL = 1;        // Clock Polarity - SCK high when idle. Leading edge of cycle is falling. Trailing rising.
+    SPI_SERCOM->SPI.CTRLA.bit.CPHA = 1;        // Clock Phase - Leading Edge Falling, change, Trailing Edge - Rising, sample
+    SPI_SERCOM->SPI.CTRLA.bit.DIPO = 3;        // Data In Pinout - SERCOM PAD[3] is used as data input (Configure away from DOPO. Not using input.)
+    SPI_SERCOM->SPI.CTRLA.bit.DOPO = 0;        // Data Output PAD[0], Serial Clock PAD[1]
+    SPI_SERCOM->SPI.CTRLA.bit.MODE = 3;        // Operating Mode - Master operation
 
-    SPI_SERCOM->SPI.CTRLA.bit.ENABLE = 1;  // Enable - Peripheral is enabled or being enabled
+    SPI_SERCOM->SPI.CTRLA.bit.ENABLE = 1; // Enable - Peripheral is enabled or being enabled
     while (SPI_SERCOM->SPI.SYNCBUSY.bit.ENABLE) {
         DBGC(DC_SPI_SYNC_ENABLING);
     }
@@ -94,8 +94,8 @@ spi_status_t spi_transmit(const uint8_t *data, uint16_t length) {
 
 void spi_stop(void) {
     if (currentSelectPin != NO_PIN) {
-        setPinOutput(currentSelectPin);
-        writePinHigh(currentSelectPin);
+        gpio_set_pin_output(currentSelectPin);
+        gpio_write_pin_high(currentSelectPin);
         currentSelectPin = NO_PIN;
     }
 }
